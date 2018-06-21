@@ -163,7 +163,7 @@ class ImJenkinsServer(object):
                 'scope': 'GLOBAL',
                 'id': identity,
                 'secret': secret,
-                'description': description,
+                'description': description.replace("'", ""),
                 '$class': 'org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl'
             }
         }
@@ -175,8 +175,9 @@ class ImJenkinsServer(object):
                                            stdout=subprocess.PIPE,
                                            stderr=subprocess.PIPE, shell=True)
         if completed_process.returncode != 0:
-            self.logger.error('POST failed (returncode=%d)',
+            self.logger.error('POST failed (returncode=%d), stderr follows',
                               completed_process.returncode)
+            self.logger.error('%s', completed_process.stderr.decode('utf-8'))
             return False
 
         return True
@@ -200,7 +201,7 @@ class ImJenkinsServer(object):
                 'scope': 'GLOBAL',
                 'id': identity,
                 'file': 'secret',
-                'description': description,
+                'description': description.replace("'", ""),
                 '$class': 'org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl'
             }
         }
@@ -213,8 +214,9 @@ class ImJenkinsServer(object):
                                            stdout=subprocess.PIPE,
                                            stderr=subprocess.PIPE, shell=True)
         if completed_process.returncode != 0:
-            self.logger.error('POST failed (returncode=%d)',
+            self.logger.error('POST failed (returncode=%d), stderr follows',
                               completed_process.returncode)
+            self.logger.error('%s', completed_process.stderr.decode('utf-8'))
             return False
 
         return True
@@ -240,7 +242,7 @@ class ImJenkinsServer(object):
                 'id': identity,
                 'username': username,
                 'password': password,
-                'description': description,
+                'description': description.replace("'", ""),
                 '$class': 'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl'
             }
         }
@@ -252,8 +254,9 @@ class ImJenkinsServer(object):
                                            stdout=subprocess.PIPE,
                                            stderr=subprocess.PIPE, shell=True)
         if completed_process.returncode != 0:
-            self.logger.error('POST failed (returncode=%d)',
+            self.logger.error('POST failed (returncode=%d), stderr follows',
                               completed_process.returncode)
+            self.logger.error('%s', completed_process.stderr.decode('utf-8'))
             return False
 
         return True
