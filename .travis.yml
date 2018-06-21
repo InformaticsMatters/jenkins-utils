@@ -1,0 +1,61 @@
+---
+
+# The jenkins-utils Travis CI/CD configuration.
+language: python
+
+os:
+- linux
+
+# Our build stages.
+# (`test` is basically a travis default default so we don't need to name it).
+# But we do want a `deploy` stage that only runs if the the commit is tagged
+# (with a label that begins `pypi-` and it's on the master branch).
+# Our tags for PyPI distributions will be of the form `pypi-1.0.1`.
+stages:
+- name: test
+- name: deploy
+  if: tag is present
+
+# Run Travis on all branches
+# (normally it only runs on master)
+branches:
+  only:
+  - "/.*/"
+
+# Installation steps.
+# We have more than one requirements file.
+install:
+- pip install -r package-requirements.txt
+- pip install -r requirements.txt
+
+# Test/build execution steps...
+# All in the default 'test' stage.
+script:
+- pyroma .
+- pylint im_jenkins_server.py
+- python setup.py bdist_wheel
+
+# Execution jobs.
+# Let's run the script against various Python versions
+# and then move to our deploy stage. Travis will only run the deploy stage
+# when the test stages have passed. Deployment will also only execute
+# if this triggering commit is tagged and we're on the master branch.
+jobs:
+  include:
+  - python: 3.6
+
+  - stage: deploy
+    python: 3.6
+    # No need to re-run scripted commands here.
+    # They're all part of the above test stages.
+    script: skip
+    deploy:
+    - provider: pypi
+      user: informaticsmatters
+      password:
+        secure: "TLkViW8ZQN9K4WTtorfKyj9TOn9nFwUwCRToSUgNoV2udp3sR53mEV/4LWR7QB2YOHpIKrn/0CMJaUyCzy7Jhofqm+0//6N7Vy6fJ0GzMRxbkn4/Qi3B+7W4B0u9HbeittOcSzZkOKEGjBF2Wzo0opt6GN5kttnQPj8oyeGo/hSe/MLe2deV/2qrnaP+nN7ES5/SrNoj8SLFvFKoJ8Guh+9+5hYbKB+G4wOCW0kvIGQc7GFQ8x8xVqB9HrFszPiJN4iL/j2TtxLkAK+3Yp5COqkLTZ6X7JZHg/nKGxkabioxkByAK7/U01nYEvht21o2tDO3r+oTMPyE2OQsVzX0PDsS5aJC/ze1jegBKsdXjJMHrsvtoVe+660Eo+F1icOlG0rXsEC75OWO04TZMo/+5CXzh2Hwq/T1kWNawlDqdgpXbHp+wbyPIX5TCDlHekVqrgvdZoCYBJAJ56Lc0RaB2zrinFZOyvbHGH0/gIrzy9TwQPXeH5TDIbJWVOyduInEIUzcgpsf8FxLUeKbCjUA60ghVk/LOBFAVo5XDXm6gOChp0sdUVpuOQ7dhiRUpvNzE8Cdtd3PTUKhevT+OECImFpj6GV4Wj1ebUsJwig/TVHksx90mNGNyWVnSriXMQi1XEeTz5/YT1GTUiKxrDa92gKEW9XkU/NdvsswmSL1OsM="
+      distributions: bdist_wheel
+      on:
+        tags: true
+        branch: master
+        condition: $TRAVIS_TAG =~ ^pypi
