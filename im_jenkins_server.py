@@ -86,7 +86,7 @@ class ImJenkinsServer(object):
         jobs = self.server.get_jobs()
         for job in jobs:
             job_name = job['name']
-            self.logger.debug('Getting "%s"...', job_name)
+            self.logger.info('Getting "%s"...', job_name)
             job_config = self.server.get_job_config(job_name)
             job_config_filename = os.path.join(dst_dir, job_name + '.xml')
             job_file = open(job_config_filename, 'w')
@@ -94,7 +94,7 @@ class ImJenkinsServer(object):
             job_file.close()
             num_got += 1
 
-        self.logger.debug('Got (%s)', num_got)
+        self.logger.info('Got (%s)', num_got)
 
         return num_got
 
@@ -116,7 +116,7 @@ class ImJenkinsServer(object):
             self.logger.error('%s is not a directory', src_dir)
             return 0
 
-        self.logger.debug('Setting job configurations from "%s"...', src_dir)
+        self.logger.info('Setting job configurations from "%s"...', src_dir)
 
         # Iterate through all the jobs...
         num_set = 0
@@ -128,18 +128,18 @@ class ImJenkinsServer(object):
             job_name = os.path.basename(job_file)[:-4]
             job_exists = self.server.job_exists(job_name)
             if job_exists and not force:
-                self.logger.debug('Skipping "%s" (Already Present)', job_name)
+                self.logger.warning('Skipping "%s" (Already Present)', job_name)
             else:
                 job_definition = open(job_file, 'r').read()
                 if job_exists:
-                    self.logger.debug('Reconfiguring "%s"...', job_name)
+                    self.logger.info('Reconfiguring "%s"...', job_name)
                     self.server.reconfig_job(job_name, job_definition)
                 else:
-                    self.logger.debug('Creating "%s"...', job_name)
+                    self.logger.info('Creating "%s"...', job_name)
                     self.server.create_job(job_name, job_definition)
                 num_set += 1
 
-        self.logger.debug('Set (%s)', num_set)
+        self.logger.info('Set (%s)', num_set)
 
         # Success if we get here...
         return num_set

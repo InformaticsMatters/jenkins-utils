@@ -6,7 +6,7 @@ The ``im-jenkins-utils`` module is a set of utilities employed by
 platform. It is a small library that currently simplifies the creation of Jobs
 using `python-jenkins`_ and various credential types using cURL.
 
-Typical use of the utilities relies on creating an ``ImJenkinsServer`` class
+Typical use of the utilities relies on creating an ``ImJenkinsServer`` object
 by providing a suitably formatted URL::
 
     from im_jenkins_server import ImJenkinsServer
@@ -14,7 +14,7 @@ by providing a suitably formatted URL::
 
 The ``url`` value is typically of the form ``https://<user>:<token>@<url>``.
 
-With this class you can then create a global text secret::
+With this object you can then create a global text secret::
 
     j_server.set_secret_text('mySecretId', 'The Secret Text')
 
