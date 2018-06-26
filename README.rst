@@ -16,7 +16,8 @@ The ``url`` value is typically of the form ``https://<user>:<token>@<url>``.
 
 With this object you can then create a global text secret::
 
-    j_server.set_secret_text('mySecretId', 'The Secret Text')
+    if j_server.is_connected():
+        j_server.set_secret_text('mySecretId', 'The Secret Text')
 
 The server following methods exist: -
 

@@ -61,6 +61,14 @@ class ImJenkinsServer(object):
                 self.logger.debug('Connected (Jenkins v%s)',
                                   self.server_version)
 
+    def is_connected(self):
+        """Returns true if connected to Jenkins.
+
+        :return: True if connected
+        :rtype: ``bool``
+        """
+        return self.server_version is not None
+
     def get_jobs(self, dst_dir):
         """Gets all the job configurations from the server.
         The jobs are extracted in their raw XML form and written to the
@@ -86,7 +94,7 @@ class ImJenkinsServer(object):
         jobs = self.server.get_jobs()
         for job in jobs:
             job_name = job['name']
-            self.logger.info('Getting "%s"...', job_name)
+            self.logger.debug('Getting "%s"...', job_name)
             job_config = self.server.get_job_config(job_name)
             job_config_filename = os.path.join(dst_dir, job_name + '.xml')
             job_file = open(job_config_filename, 'w')
@@ -94,7 +102,7 @@ class ImJenkinsServer(object):
             job_file.close()
             num_got += 1
 
-        self.logger.info('Got (%s)', num_got)
+        self.logger.debug('Got (%s)', num_got)
 
         return num_got
 
@@ -116,7 +124,7 @@ class ImJenkinsServer(object):
             self.logger.error('%s is not a directory', src_dir)
             return 0
 
-        self.logger.info('Setting job configurations from "%s"...', src_dir)
+        self.logger.debug('Setting job configurations from "%s"...', src_dir)
 
         # Iterate through all the jobs...
         num_set = 0
@@ -132,14 +140,14 @@ class ImJenkinsServer(object):
             else:
                 job_definition = open(job_file, 'r').read()
                 if job_exists:
-                    self.logger.info('Reconfiguring "%s"...', job_name)
+                    self.logger.debug('Reconfiguring "%s"...', job_name)
                     self.server.reconfig_job(job_name, job_definition)
                 else:
-                    self.logger.info('Creating "%s"...', job_name)
+                    self.logger.debug('Creating "%s"...', job_name)
                     self.server.create_job(job_name, job_definition)
                 num_set += 1
 
-        self.logger.info('Set (%s)', num_set)
+        self.logger.debug('Set (%s)', num_set)
 
         # Success if we get here...
         return num_set
