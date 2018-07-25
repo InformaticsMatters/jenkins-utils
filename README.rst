@@ -1,6 +1,9 @@
 Informatics Matters Jenkins Utilities
 =====================================
 
+.. image:: https://travis-ci.org/InformaticsMatters/jenkins-utils.svg?branch=master
+   :target: https://travis-ci.org/InformaticsMatters/jenkins-utils
+
 .. image:: https://badge.fury.io/py/im-jenkins-utils.svg
    :target: https://badge.fury.io/py/im-jenkins-utils
 
