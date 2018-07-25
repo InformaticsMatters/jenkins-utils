@@ -1,6 +1,9 @@
 Informatics Matters Jenkins Utilities
 =====================================
 
+.. image:: https://badge.fury.io/py/im-jenkins-utils.svg
+   :target: https://badge.fury.io/py/im-jenkins-utils
+
 The ``im-jenkins-utils`` module is a set of utilities employed by
 `Informatics Matters`_ for automated configuration of the Jenkins CI/CD
 platform. It is a small library that currently simplifies the creation of Jobs
