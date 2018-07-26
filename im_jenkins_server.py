@@ -152,6 +152,26 @@ class ImJenkinsServer(object):
         # Success if we get here...
         return num_set
 
+    def check_jobs(self):
+        """Checks all the jobs on the server. If any have failed or are
+        unstable (i.e. where colour begins 'red' or 'yellow') then this call
+        returns False, otherwise it returns True. Basically if this call
+        returns False then a job on the server has failed or is unstable.
+
+        ":return: False if any job has failed or is unstable.
+        """
+        # Do nothing if we do not appear to be connected.
+        if not self.server_version:
+            return True
+        # Check the 'colour' of every job...
+        jobs = self.server.get_jobs()
+        for job in jobs:
+            job_colour = job['color'].lower()
+            if job_colour.startswith('red') or job_colour.startswith('yellow'):
+                return False
+        # No failed or unstable jobs if we get here
+        return True
+
     def set_secret_text(self, identity, secret,
                         description='Secret Text'):
         """Uses the jenkins API (and cURL) to set a text-based secret.

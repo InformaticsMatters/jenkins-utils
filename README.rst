@@ -12,6 +12,9 @@ The ``im-jenkins-utils`` module is a set of utilities employed by
 platform. It is a small library that currently simplifies the creation of Jobs
 using `python-jenkins`_ and various credential types using cURL.
 
+It also includes a growing list of wrapper functions to simplify
+a number of tasks like checking whether any jobn has failed.
+
 Typical use of the utilities relies on creating an ``ImJenkinsServer`` object
 by providing a suitably formatted URL::
 
@@ -25,13 +28,14 @@ With this object you can then create a global text secret::
     if j_server.is_connected():
         j_server.set_secret_text('mySecretId', 'The Secret Text')
 
-The server following methods exist: -
+``ImJenkinsServer`` provides the following methods: -
 
 * set_secret_text()
 * set_secret_file()
 * set_secret_user()
 * get_jobs()
 * set_jobs()
+* check_jobs()
 
 .. _Informatics Matters: http://www.informaticsmatters.com
 .. _python-jenkins: https://pypi.org/project/python-jenkins

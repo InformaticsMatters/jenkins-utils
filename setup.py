@@ -16,7 +16,7 @@ def get_long_description():
 setup(
 
     name='im-jenkins-utils',
-    version='1.0.2',
+    version='1.1.0',
     author='Alan Christie',
     author_email='achristie@informaticsmatters.com',
     url='https://github.com/InformaticsMatters/jenkins-utils',
@@ -32,7 +32,7 @@ setup(
 
     # Essential dependencies
     install_requires=[
-        'python-jenkins == 1.0.*'
+        'python-jenkins == 1.1.*'
     ],
     # Supported Python versions
     python_requires='>=3, <4',
