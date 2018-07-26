@@ -158,11 +158,13 @@ class ImJenkinsServer(object):
         returns False, otherwise it returns True. Basically if this call
         returns False then a job on the server has failed or is unstable.
 
+        This method also returns False if the server is not connected.
+
         ":return: False if any job has failed or is unstable.
         """
         # Do nothing if we do not appear to be connected.
         if not self.server_version:
-            return True
+            return False
         # Check the 'colour' of every job...
         jobs = self.server.get_jobs()
         for job in jobs:
