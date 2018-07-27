@@ -9,11 +9,12 @@ Informatics Matters Jenkins Utilities
 
 The ``im-jenkins-utils`` module is a set of utilities employed by
 `Informatics Matters`_ for automated configuration of the Jenkins CI/CD
-platform. It is a small library that currently simplifies the creation of Jobs
-using `python-jenkins`_ and various credential types using cURL.
+platform. It is a small library that currently simplifies the creation of Jobs,
+secrets and other actions using `python-jenkins`_ and cURL.
 
-It also includes a growing list of wrapper functions to simplify
-a number of tasks like checking whether any jobn has failed.
+It also includes a growing list of convenient wrapper functions to simplify
+a number of tasks, like checking whether any jobs have failed
+(or are unstable).
 
 Typical use of the utilities relies on creating an ``ImJenkinsServer`` object
 by providing a suitably formatted URL::
