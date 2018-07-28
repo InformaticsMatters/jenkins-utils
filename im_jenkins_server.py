@@ -152,7 +152,7 @@ class ImJenkinsServer(object):
         # Success if we get here...
         return num_set
 
-    def check_jobs(self):
+    def check_jobs(self, verbose=False):
         """Checks all the jobs on the server. If any have failed or are
         unstable (i.e. where colour begins 'red' or 'yellow') then this call
         returns False, otherwise it returns True. Basically if this call
@@ -160,18 +160,39 @@ class ImJenkinsServer(object):
 
         This method also returns False if the server is not connected.
 
-        ":return: False if any job has failed or is unstable.
+        :param verbose: True to generate stdout
+        :type verbose: ``Boolean``
+        :return: False if any job has failed or is unstable.
         """
         # Do nothing if we do not appear to be connected.
         if not self.server_version:
+            print('[Failed to connect]')
             return False
         # Check the 'colour' of every job...
         jobs = self.server.get_jobs()
+        num_ok = len(jobs)
+        num_red = 0
+        num_yellow = 0
         for job in jobs:
             job_colour = job['color'].lower()
-            if job_colour.startswith('red') or job_colour.startswith('yellow'):
+            if job_colour.startswith('red'):
+                num_red += 1
+                num_ok -= 1
+            elif job_colour.startswith('yellow'):
+                num_yellow += 1
+                num_ok -= 1
+            # If not verbose then we can return on the first failure
+            if not verbose and (num_yellow or num_red):
                 return False
-        # No failed or unstable jobs if we get here
+
+        if verbose:
+            if not num_red and not num_yellow:
+                print('%d ok' % num_ok)
+            else:
+                print('%d ok, %d err, %d fail' % (num_ok, num_yellow, num_red))
+
+        if num_yellow or num_red:
+            return False
         return True
 
     def set_secret_text(self, identity, secret,
