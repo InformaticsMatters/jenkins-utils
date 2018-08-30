@@ -16,7 +16,7 @@ def get_long_description():
 setup(
 
     name='im-jenkins-utils',
-    version='1.1.2',
+    version='1.1.3',
     author='Alan Christie',
     author_email='achristie@informaticsmatters.com',
     url='https://github.com/InformaticsMatters/jenkins-utils',

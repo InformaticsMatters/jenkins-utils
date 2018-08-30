@@ -47,15 +47,14 @@ class ImJenkinsServer(object):
         try:
             self.server = jenkins.Jenkins(url)
         except BaseException as error:
-            self.logger.error('Failed to connect (exception follows)')
+            self.logger.error('Failed to connect')
             self.logger.info(error)
 
         if self.server:
             try:
                 self.server_version = self.server.get_version()
             except BaseException as error:
-                self.logger.error('Failed to get server version'
-                                  ' (exception follows)')
+                self.logger.error('Failed to get server version')
                 self.logger.info(error)
             if self.server_version:
                 self.logger.debug('Connected (Jenkins v%s)',
