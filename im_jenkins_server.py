@@ -105,11 +105,14 @@ class ImJenkinsServer(object):
 
         return num_got
 
-    def set_jobs(self, src_dir, force=False):
+    def set_jobs(self, src_dir, set_disabled=False, force=False):
         """Writes the jobs in the given directory to the server.
 
         :param src_dir: The source directory, which must exist
         :type src_dir: ``String``
+        :param set_disabled: True to disable the job once it has been
+                             created (or reconfigured)
+        :type set_disabled: ``Boolean``
         :param force: True to force the action
         :type force: ``Boolean``
         :return: Number of jobs written
@@ -144,6 +147,9 @@ class ImJenkinsServer(object):
                 else:
                     self.logger.debug('Creating "%s"...', job_name)
                     self.server.create_job(job_name, job_definition)
+                # Optionally disable each job as it's created
+                if set_disabled:
+                    self.server.disable_job(job_name)
                 num_set += 1
 
         self.logger.debug('Set (%s)', num_set)
