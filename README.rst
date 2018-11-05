@@ -36,6 +36,8 @@ With this object you can then create a global text secret::
 * set_secret_user()
 * get_jobs()
 * set_jobs()
+* get_views()
+* set_views()
 * check_jobs()
 
 .. _Informatics Matters: http://www.informaticsmatters.com

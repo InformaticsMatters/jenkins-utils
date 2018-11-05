@@ -151,6 +151,91 @@ class ImJenkinsServer(object):
         # Success if we get here...
         return num_set
 
+    def get_views(self, dst_dir):
+        """Gets all the view configurations from the server (except the 'all' view).
+        The views are extracted in their raw XML form and written to the
+        directory provided using the view name as the basename of the file.
+
+        :param dst_dir: The directory to store the configurations,
+                        which has to exist.
+        :type dst_dir: ``String``
+        :return: Number of views retrieved
+        :rtype: ``int``
+        """
+        # Do nothing if we do not appear to be connected.
+        if not self.server_version:
+            return 0
+
+        self.logger.debug('Getting view configurations into "%s"...', dst_dir)
+
+        if not os.path.isdir(dst_dir):
+            self.logger.error('%s is not a directory', dst_dir)
+            return 0
+
+        num_got = 0
+        views = self.server.get_views()
+        for view in views:
+            view_name = view['name']
+            if view_name in ['all']:
+                continue
+            self.logger.debug('Getting "%s"...', view_name)
+            view_config = self.server.get_view_config(view_name)
+            view_config_filename = os.path.join(dst_dir, view_name + '.xml')
+            view_file = open(view_config_filename, 'w')
+            view_file.write(view_config)
+            view_file.close()
+            num_got += 1
+
+        self.logger.debug('Got (%s)', num_got)
+
+        return num_got
+
+    def set_views(self, src_dir, force=False):
+        """Writes the views in the given directory to the server.
+
+        :param src_dir: The source directory, which must exist
+        :type src_dir: ``String``
+        :param force: True to force the action
+        :type force: ``Boolean``
+        :return: Number of views written
+        :rtype: ``int`
+        """
+        # Do nothing if we do not appear to be connected.
+        if not self.server_version:
+            return 0
+
+        if not os.path.isdir(src_dir):
+            self.logger.error('%s is not a directory', src_dir)
+            return 0
+
+        self.logger.debug('Setting view configurations from "%s"...', src_dir)
+
+        # Iterate through all the views...
+        num_set = 0
+        view_files = glob.glob('%s/*.xml' % src_dir)
+        for view_file in view_files:
+            # The name of the view is the basename of the file.
+            # and we simply load the file contents (into a string)
+            # to create the view (if the job does not exist)
+            view_name = os.path.basename(view_file)[:-4]
+            view_exists = self.server.view_exists(view_name)
+            if view_exists and not force:
+                self.logger.warning('Skipping "%s" (Already Present)', view_name)
+            else:
+                view_definition = open(view_file, 'r').read()
+                if view_exists:
+                    self.logger.debug('Reconfiguring "%s"...', view_name)
+                    self.server.reconfig_view(view_name, view_definition)
+                else:
+                    self.logger.debug('Creating "%s"...', view_name)
+                    self.server.create_view(view_name, view_definition)
+                num_set += 1
+
+        self.logger.debug('Set (%s)', num_set)
+
+        # Success if we get here...
+        return num_set
+
     def check_jobs(self, verbose=False):
         """Checks all the jobs on the server. If any have failed or are
         unstable (i.e. where colour begins 'red' or 'yellow') then this call

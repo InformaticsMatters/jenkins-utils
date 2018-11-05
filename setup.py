@@ -3,7 +3,7 @@
 
 # Setup module for the Python-based Jenkins Utilities.
 #
-# Jun 2018
+# November 2018
 
 import platform
 from setuptools import setup, find_packages
@@ -16,7 +16,7 @@ def get_long_description():
 setup(
 
     name='im-jenkins-utils',
-    version='1.1.3',
+    version='1.2.0',
     author='Alan Christie',
     author_email='achristie@informaticsmatters.com',
     url='https://github.com/InformaticsMatters/jenkins-utils',
@@ -32,7 +32,7 @@ setup(
 
     # Essential dependencies
     install_requires=[
-        'python-jenkins == 1.1.*'
+        'python-jenkins == 1.3.*'
     ],
     # Supported Python versions
     python_requires='>=3, <4',
