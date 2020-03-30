@@ -3,7 +3,7 @@
 
 # Setup module for the Python-based Jenkins Utilities.
 #
-# November 2018
+# March 20202
 
 import platform
 from setuptools import setup, find_packages
@@ -16,11 +16,11 @@ def get_long_description():
 setup(
 
     name='im-jenkins-utils',
-    version='1.2.0',
+    version='1.3.0',
     author='Alan Christie',
     author_email='achristie@informaticsmatters.com',
     url='https://github.com/InformaticsMatters/jenkins-utils',
-    license='Copyright (C) 2018 Informatics Matters Ltd. All rights reserved.',
+    license='Copyright (C) 2020 Informatics Matters Ltd. All rights reserved.',
     description='Utilities for Informatics Matters CI/CD configuration',
     long_description=get_long_description(),
     keywords='jenkins',
@@ -28,7 +28,7 @@ setup(
 
     # Our modules to package
     packages=find_packages(exclude=['*.test', '*.test.*', 'test.*', 'test']),
-    py_modules = ['im_jenkins_server'],
+    py_modules=['im_jenkins_server'],
 
     # Essential dependencies
     install_requires=[
