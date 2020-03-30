@@ -12,6 +12,7 @@ following environment variable: -
     export PYTHONHTTPSVERIFY=0
 """
 
+import configparser
 import logging
 import glob
 import json
@@ -29,12 +30,15 @@ class ImJenkinsServer(object):
 
     CREDENTIALS_API = 'credentials/store/system/domain/_/createCredentials'
 
-    def __init__(self, url):
+    def __init__(self, url, config_file=None):
         """Initialise the Jenkins server for the given url. The url is
-         typically of the form https://<user>:token>@<url>.
+         typically of the form https://<user>:token>@<url>. If a configuratio
+         file is supplied this will be loaded and used.
 
         :param url: The server URL
         :type url: ``String``
+        :param config_file: Path to a configuration file (or None)
+        :type v: ``String``
         """
         # Our logger...
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -59,6 +63,13 @@ class ImJenkinsServer(object):
             if self.server_version:
                 self.logger.debug('Connected (Jenkins v%s)',
                                   self.server_version)
+
+        # Read config file?
+        self.config_file = config_file
+        self.config = None
+        if self.config_file:
+            self.config = configparser.ConfigParser()
+            self.config.read(self.config_file)
 
     def is_connected(self):
         """Returns true if connected to Jenkins.
@@ -258,12 +269,27 @@ class ImJenkinsServer(object):
         if not self.server_version:
             print('[Failed to connect]')
             return False
+
+        # Are we told to exclude jobs via a config file?
+        exclude_jobs = []
+        if self.config and self.config.has_option('check', 'exclude-job'):
+            # We have some jobs to exclude.
+            # Convert all to lower-case - we assume case is not important
+            job_names = self.config.get('check', 'exclude-job').split('\n')
+            for job_name in job_names:
+                exclude_jobs.append(job_name.lower())
+
         # Check the 'colour' of every job...
+        # Unless it's in the excluded list.
         jobs = self.server.get_jobs()
         num_ok = len(jobs)
+        num_ignored = 0
         num_red = 0
         num_yellow = 0
         for job in jobs:
+            if job['name'].lower() in exclude_jobs:
+                num_ignored += 1
+                continue
             job_colour = job['color'].lower()
             if job_colour.startswith('red'):
                 num_red += 1
@@ -277,9 +303,12 @@ class ImJenkinsServer(object):
 
         if verbose:
             if not num_red and not num_yellow:
-                print('%d ok' % num_ok)
+                print('%d ok, %d ignored' % (num_ok, num_ignored))
             else:
-                print('%d ok, %d err, %d fail' % (num_ok, num_yellow, num_red))
+                print('%d ok, %d ignored, %d err, %d fail' % (num_ok,
+                                                              num_ignored,
+                                                              num_yellow,
+                                                              num_red))
 
         if num_yellow or num_red:
             return False
