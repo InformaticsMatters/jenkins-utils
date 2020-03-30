@@ -40,5 +40,30 @@ With this object you can then create a global text secret::
 * set_views()
 * check_jobs()
 
+Configuration
+-------------
+
+You can provide configuration in a Python ConfigParser-style file.
+
+At the moment this is used to provide a list of Jenkins Jobs that are excluded
+during the ``check_jobs()`` method. If there are Jobs that can fail, that
+you're not interested in, then you can provide their names via a configuration
+file.
+
+To exclude Jobs **Build (Experiment)** and **Run (Experiment)** you can provide
+their names in the ``check`` *section* using the ``exclude-job`` *key*::
+
+    [check]
+    exclude-job: Build (Experiment)
+        Run (Experiment)
+
+And then pass the name and path of the configuration file to the server
+object::
+
+    j_server = ImJenkinsServer(url, 'config.ini')
+
+Jobs are assumed to be tolerant of case and the Job names are checked
+while ignoring the name case.
+
 .. _Informatics Matters: http://www.informaticsmatters.com
 .. _python-jenkins: https://pypi.org/project/python-jenkins
