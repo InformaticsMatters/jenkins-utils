@@ -24,7 +24,7 @@ import jenkins
 
 # pylint: disable=too-few-public-methods
 # pylint: disable=no-member
-class ImJenkinsServer(object):
+class ImJenkinsServer():
     """Class providing Jenkins configuration services.
     """
 
@@ -343,7 +343,8 @@ class ImJenkinsServer(object):
               " --data-urlencode 'json=%(json)s'" % content
         completed_process = subprocess.run(cmd,
                                            stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE, shell=True)
+                                           stderr=subprocess.PIPE, shell=True,
+                                           check=False)
         if completed_process.returncode != 0:
             self.logger.error('POST failed (returncode=%d), stderr follows',
                               completed_process.returncode)
@@ -382,7 +383,8 @@ class ImJenkinsServer(object):
               " -F secret=@%(file)s -F 'json=%(json)s'" % content
         completed_process = subprocess.run(cmd,
                                            stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE, shell=True)
+                                           stderr=subprocess.PIPE, shell=True,
+                                           check=False)
         if completed_process.returncode != 0:
             self.logger.error('POST failed (returncode=%d), stderr follows',
                               completed_process.returncode)
@@ -422,7 +424,8 @@ class ImJenkinsServer(object):
               " --data-urlencode 'json=%(json)s'" % content
         completed_process = subprocess.run(cmd,
                                            stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE, shell=True)
+                                           stderr=subprocess.PIPE, shell=True,
+                                           check=False)
         if completed_process.returncode != 0:
             self.logger.error('POST failed (returncode=%d), stderr follows',
                               completed_process.returncode)
